@@ -87,8 +87,46 @@
 			        <div class="feature-icon bg-primary bg-gradient">
 			          <svg class="bi" width="1em" height="1em"><use xlink:href="#toggles2"/></svg>
 			        </div>
-			        <h2>Altra Funzione</h2>
-			        <p>Funzionalità ancora iin sviluppo</p>
+			        <h2>Lanciati da un po'</h2>
+			        <p>Trova tutti i satelliti lanciati più di due anni fa</p>
+			        <a href="satellite/piuDiDueAnni" class="icon-link">
+			          Vai alla funzionalità
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
+			        </a>
+			      </div>
+			    </div>
+			  </div>
+			  
+			  <div class="container px-4 py-5" id="featured-3">
+			    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+			      <div class="feature col">
+			        <div class="feature-icon bg-primary bg-gradient">
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#collection"/></svg>
+			        </div>
+			        <h2>In orbita e disattivati</h2>
+			        <p>Ricerca i satelliti disattivati che non hanno mai fatto ritorno.</p>
+			        <a href="satellite/disattivatiMaInOrbita" class="icon-link">
+			          Vai alla funzionalità
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
+			        </a>
+			      </div>
+			      <div class="feature col">
+			        <div class="feature-icon bg-primary bg-gradient">
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#people-circle"/></svg>
+			        </div>
+			        <h2>In orbita da 10 anni e fissi</h2>
+			        <p>Trova tutti i satelliti che sono fissi in orbita da almeno 10 anni</p>
+			        <a href="satellite/inOrbitaDa10AnniEFissi" class="icon-link">
+			          Vai alla funzionalità
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
+			        </a>
+			      </div>
+			      <div class="feature col">
+			        <div class="feature-icon bg-primary bg-gradient">
+			          <svg class="bi" width="1em" height="1em"><use xlink:href="#toggles2"/></svg>
+			        </div>
+			        <h2>Funzionalità in sviluppo</h2>
+			        <p>Stiamo lavorando su qualcosa di nuovo...</p>
 			        <a href="#" class="icon-link">
 			          Vai alla funzionalità
 			          <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>

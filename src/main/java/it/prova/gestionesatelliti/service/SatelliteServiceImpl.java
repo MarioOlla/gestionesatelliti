@@ -1,6 +1,8 @@
 package it.prova.gestionesatelliti.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.criteria.Predicate;
@@ -80,5 +82,35 @@ public class SatelliteServiceImpl implements SatelliteService {
 
 		return satelliteRepository.findAll(criteriSpecificazione);
 	}
+	
+	@Transactional(readOnly = true)
+	public List<Satellite> tuttiLanciatiPiuDiDueAnniFa(){
+		Date date = new Date();
+        // Conversione da Date a Calendar
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        // -2 anni
+        c.add(Calendar.YEAR, -2);
+        // Riconversione a data
+        Date menoDueAnni = c.getTime();
+		return satelliteRepository.findAllLaunchedMoreThan2YearsAgo(menoDueAnni);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Satellite> trovaTuttiDisattivatiMaInOrbita(){
+		return satelliteRepository.findDisattivatiMaInOrbita();
+	}
 
+	@Transactional(readOnly = true)
+	public List<Satellite> trovaTuttiFissiInOrbitaDaDieciAnni() {
+		Date date = new Date();
+        // Conversione da Date a Calendar
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        // -2 anni
+        c.add(Calendar.YEAR, -10);
+        // Riconversione a data
+        Date menoDieciAnni = c.getTime();
+		return satelliteRepository.findFissiInOrbitaDa10Anni(menoDieciAnni);
+	}
 }
