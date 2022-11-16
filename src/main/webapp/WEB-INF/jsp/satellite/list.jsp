@@ -76,11 +76,15 @@
 												</c:if>
 												
 												<c:if test="${satelliteItem.dataLancio==null||satelliteItem.dataLancio.after(today) }">
-													<a class="btn  btn-sm btn-outline-primary ml-2 mr-2" href="${pageContext.request.contextPath}/satellite/launch/${satelliteItem.id }">Launch</a>
+													<form action="${pageContext.request.contextPath}/satellite/launch/${satelliteItem.id }" method="post">
+														<button type="submit" name="submit" value="submit" id="submit" class="btn btn-primary">Launch</button>
+													</form>
 												</c:if>
 												
 												<c:if test="${(satelliteItem.dataRientro==null&&satelliteItem.dataLancio!=null&&satelliteItem.dataLancio.before(today))||satelliteItem.dataRientro.after(today) }">
-													<a class="btn  btn-sm btn-outline-primary ml-2 mr-2" href="${pageContext.request.contextPath}/satellite/rientra/${satelliteItem.id }">Rientra</a>
+													<form action="${pageContext.request.contextPath}/satellite/recover/${satelliteItem.id }" method="post">
+														<button type="submit" name="submit" value="submit" id="submit" class="btn btn-primary">Recover</button>
+													</form>
 												</c:if>
 											</td>
 										</tr>

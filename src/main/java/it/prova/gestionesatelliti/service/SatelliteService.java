@@ -22,4 +22,6 @@ public interface SatelliteService {
 	public List<Satellite> trovaTuttiDisattivatiMaInOrbita();
 
 	public List<Satellite> trovaTuttiFissiInOrbitaDaDieciAnni();
+
+	public List<Satellite> tuttiINonDisattivatiNonAncoraRientrati();
 }

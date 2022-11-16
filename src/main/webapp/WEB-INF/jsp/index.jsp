@@ -54,6 +54,10 @@
 				        <p class="col-md-8 fs-4">Utilizza questa funzionalità per ricercare dei satelliti. </p>
 				        <a class="btn btn-primary btn-lg" href="${pageContext.request.contextPath}/satellite/search">Vai a Ricerca</a>
 				      </div>
+				      <div class="container-fluid py-5">
+				        <p class="col-md-8 fs-4">Utilizza questa funzionalità per attivare il protocollo di emergenza. </p>
+				        <a class="btn btn-danger btn-lg" href="${pageContext.request.contextPath}/satellite/preDisabilita">Esegui</a>
+				      </div>
 			    </div>
 			    
 			  </div>

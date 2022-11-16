@@ -57,7 +57,7 @@
 							<h6 class="card-title">I campi con <span class="text-danger">*</span> sono obbligatori</h6>
 		
 		
-							<form:form modelAttribute="insert_satellite_attr" method="post" action="save" class="row g-3" novalidate="novalidate">
+							<form:form modelAttribute="toUpdate_satellite_attr" method="post" action="${pageContext.request.contextPath}/satellite/update" class="row g-3" novalidate="novalidate">
 							
 							
 								<div class="col-md-6">
@@ -92,7 +92,7 @@
 									<label for="dataRientro" class="form-label">Data di Rientro</label>
                         			<spring:bind path="dataRientro">
 	                        		<input class="form-control ${status.error ? 'is-invalid' : ''}" id="dataRientro" type="date" placeholder="dd/MM/yy"
-	                            		title="formato : gg/mm/aaaa"  name="dataRientro" required 
+                           		title="formato : gg/mm/aaaa"  name="dataRientro" required 
 	                            		value="${parsedDate}" >
 		                            </spring:bind>
 	                            	<form:errors  path="dataRientro" cssClass="error_field" />

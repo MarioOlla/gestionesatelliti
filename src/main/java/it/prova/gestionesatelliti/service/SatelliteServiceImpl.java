@@ -113,4 +113,9 @@ public class SatelliteServiceImpl implements SatelliteService {
         Date menoDieciAnni = c.getTime();
 		return satelliteRepository.findFissiInOrbitaDa10Anni(menoDieciAnni);
 	}
+
+	@Override
+	public List<Satellite> tuttiINonDisattivatiNonAncoraRientrati() {
+		return satelliteRepository.findAllNotDisattivatiAndNotReturned();
+	}
 }

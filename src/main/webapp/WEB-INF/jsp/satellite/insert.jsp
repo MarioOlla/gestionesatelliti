@@ -71,7 +71,7 @@
 								<div class="col-md-6">
 									<label for="codice" class="form-label">Codice <span class="text-danger">*</span></label>
 									<spring:bind path="codice">
-										<input type="text" name="codice" id="codice" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="Inserire il codice" value="${insert_impiegato_attr.codice }" required>
+										<input type="text" name="codice" id="codice" class="form-control ${status.error ? 'is-invalid' : ''}" placeholder="Inserire il codice" value="${insert_satellite_attr.codice }" required>
 									</spring:bind>
 									<form:errors  path="codice" cssClass="error_field" />
 								</div>

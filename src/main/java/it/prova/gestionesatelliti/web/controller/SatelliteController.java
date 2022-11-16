@@ -60,17 +60,14 @@ public class SatelliteController {
 	@PostMapping("/save")
 	public String save(@Valid @ModelAttribute("insert_satellite_attr") Satellite satellite, BindingResult result,
 			RedirectAttributes redirectAttrs) {
-
+		Date now = new Date();
 		// se ci sono errori di validazione...
-		if (result.hasErrors()
-				// o se le date hanno un ordine insensato...
-				|| satellite.getDataRientro() != null && satellite.getDataLancio() == null
-				// o se c'è una data di lancio passata ma nessuno stato OPPURE c'è uno stato ma
-				// il satellite non è ancora stato lanciato...
-				|| satellite.getDataLancio().before(new Date()) == (satellite.getStato() == null))
-			return "satellite/insert"; //torno alla insert
-
-		//altrimenti Inserisco
+		if (result.hasErrors())
+			return "satellite/insert"; // torno alla insert
+		String validazione = validaParametri(satellite, now, result);
+		if (validazione != null)
+			return validazione+"insert";
+		// altrimenti Inserisco
 		satelliteService.inserisciNuovo(satellite);
 
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
@@ -91,14 +88,15 @@ public class SatelliteController {
 
 	@PostMapping("/delete")
 	public String delete(@RequestParam(required = true) Long idSatellite, RedirectAttributes redirectAttrs) {
-		
+
 		Satellite s = satelliteService.caricaSingoloElemento(idSatellite);
-		
-		if((s.getDataLancio()!=null && s.getDataRientro()==null))
+
+		if ((s.getDataLancio() != null && s.getDataRientro() == null))
 			return "redirect:/satellite";
-		if(s.getDataRientro()!=null&&(s.getDataRientro().after(new Date())||s.getDataLancio().before(new Date())))
+		if (s.getDataRientro() != null
+				&& (s.getDataRientro().after(new Date()) || s.getDataLancio().before(new Date())))
 			return "redirect:/satellite";
-		
+
 		satelliteService.rimuovi(idSatellite);
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/satellite";
@@ -114,13 +112,60 @@ public class SatelliteController {
 	public String update(@Valid @ModelAttribute("toUpdate_satellite_attr") Satellite satellite, BindingResult result,
 			RedirectAttributes redirectAttrs) {
 
-		if (result.hasErrors())
-			return "satellite/update";
-
+		Date now = new Date();
+		Satellite s = satelliteService.caricaSingoloElemento(satellite.getId());
+		System.out.println("sono entrato nell'update");
+		if (s.getDataRientro() != null && dopoIlRientro(satellite, now)) {
+			
+		} else {
+			if (result.hasErrors())
+				return "satellite/update";
+			if (satellite.getDataRientro()==null || primaDelRientro(satellite, now)) {
+				if(satellite.getDataLancio()!=null && dopoIlLancio(satellite, now)) {
+					if(satellite.getDataLancio().after(s.getDataLancio())) {
+						result.rejectValue("dataLancio", "satellite.dataLancio.illegalDateEdit");
+						return "satellite/update";
+					}
+					if(satellite.getStato()==null && dopoIlLancio(s, now)) {
+						result.rejectValue("stato", "satellite.stato.stateShouldExist");
+						return "satellite/update";
+					}	
+				}else {
+					String validazione = validaParametri(satellite, now, result);
+					if(validazione != null)
+						return validazione+"update";
+				}
+			}else {
+				redirectAttrs.addFlashAttribute("errorMessage",
+						"Operazione fallita, impossibile modificare un satellite già rientrato.");
+				return "redirect:/satellite";
+			}
+		}
+		
 		satelliteService.aggiorna(satellite);
-
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/satellite";
+	}
+	
+	@GetMapping("/preDisabilita")
+	public ModelAndView preparaDisabilitazione() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("quanti_rientrano", satelliteService.tuttiINonDisattivatiNonAncoraRientrati().size());
+		mv.addObject("quanti_su_db", satelliteService.listAllElements().size());
+		mv.setViewName("satellite/disabilita");
+		return mv;
+	}
+	
+	@PostMapping("/disabilita")
+	public String disabilitazione(RedirectAttributes redirectAttrs) {
+		Date now = new Date();
+		for(Satellite sat : satelliteService.tuttiINonDisattivatiNonAncoraRientrati()) {
+			sat.setStato(StatoSatellite.DISATTIVATO);
+			sat.setDataRientro(now);
+			satelliteService.aggiorna(sat);
+		}
+		redirectAttrs.addFlashAttribute("successMessage", "Protocollo eseguito con successo.");
+		return "redirect:/home";		
 	}
 
 	@PostMapping("/launch/{idSatellite}")
@@ -139,7 +184,7 @@ public class SatelliteController {
 		return "redirect:/satellite";
 	}
 
-	@PostMapping("/recover/{idSatellite")
+	@PostMapping("/recover/{idSatellite}")
 	public String recuperaSatellite(@PathVariable(required = true) Long idSatellite, RedirectAttributes redirectAttrs) {
 
 		Satellite daRecuperare = satelliteService.caricaSingoloElemento(idSatellite);
@@ -180,5 +225,50 @@ public class SatelliteController {
 		mv.addObject("satellite_list_attribute", results);
 		mv.setViewName("satellite/list");
 		return mv;
+	}
+
+	private boolean dateOrdinate(Satellite satellite) {
+		return satellite.getDataLancio().before(satellite.getDataRientro());
+	}
+
+	private boolean dopoIlRientro(Satellite satellite, Date adesso) {
+		return satellite.getDataRientro().before(adesso);
+	}
+
+	private boolean primaDelRientro(Satellite satellite, Date adesso) {
+		return satellite.getDataRientro().after(adesso);
+	}
+
+	private boolean dopoIlLancio(Satellite satellite, Date adesso) {
+		return satellite.getDataLancio().before(adesso);
+	}
+
+	private boolean primaDelLancio(Satellite satellite, Date adesso) {
+		return satellite.getDataLancio().after(adesso);
+	}
+
+	private boolean dataLancioNullaEDataRientroNonNulla(Satellite satellite) {
+		return satellite.getDataLancio() == null && satellite.getDataRientro() != null;
+	}
+
+	private String validaParametri(Satellite satellite, Date now, BindingResult result) {
+		if (dataLancioNullaEDataRientroNonNulla(satellite)) {
+			result.rejectValue("dataLancio", "satellite.dataLancio.isblankbutdatarientroisnot");
+			return "satellite/";
+		}
+		if (satellite.getDataLancio() != null && satellite.getDataRientro() != null && !dateOrdinate(satellite)) {
+			result.rejectValue("dataLancio", "satellite.dataLancio.dateInvertite");
+			result.rejectValue("dataRientro", "satellite.dataLancio.dateInvertite");
+			return "satellite/";
+		}
+		if ((satellite.getDataLancio() == null || primaDelLancio(satellite, now)) && satellite.getStato() != null) {
+			result.rejectValue("stato", "satellite.stato.stateShouldNotExist");
+			return "satellite/";
+		}
+		if (satellite.getDataLancio() != null && dopoIlLancio(satellite, now) && satellite.getStato() == null) {
+			result.rejectValue("stato", "satellite.stato.stateShouldExist");
+			return "satellite/";
+		}
+		return null;
 	}
 }
